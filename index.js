@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import mongoose from 'mongoose';
 import players from './routes/players.js';
 import games from './routes/games.js';
+import auth from './routes/auth.js';
 
 dotenv.config()
 
@@ -13,6 +14,7 @@ app.use(helmet())
 app.use(express.json()) 
 app.use('/api/players/', players)
 app.use('/api/games/', games)
+app.use('/api/auth/', auth)
 
 const port = process.env.PORT
 const mongoDB = process.env.MONGODB 
