@@ -48,5 +48,5 @@ export function validateCredentials (req){
         password: Joi.string().min(3).max(255).required()
     })
     return schema.validate(req)
-}
+}   
 
