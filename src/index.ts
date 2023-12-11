@@ -2,8 +2,8 @@ import express from 'express'
 import socket from 'socket.io'
 import http from 'http'
 import * as dotenv from 'dotenv'
-//import cors from 'cors'
-//import helmet from 'helmet'
+import cors from 'cors'
+import helmet from 'helmet'
 import mongoose from 'mongoose'
 import playerRouter from './routes/players'
 import gameRouter from './routes/games'
@@ -13,8 +13,8 @@ dotenv.config()
 
 const app = express()
 
-//app.use(helmet())
-//app.use(cors())
+app.use(helmet())
+app.use(cors())
 app.use(express.json())
 app.use('/api/players/', playerRouter)
 app.use('/api/games/', gameRouter)
