@@ -29,9 +29,9 @@ router.post('/', async (req: Request, res: Response) => {
     player.password = await bcrypt.hash(player.password, salt)
     await player.save()
     
-    const token = player.generateAuthToken()
+    //const token = player.generateAuthToken()
 
-    res.header('x-auth-token', token).send(lodash.pick(player, ['_id','name', 'email']))
+    return res.status(200).send(lodash.pick(player, ["_id", "name", "email"]))
 })
 
 export default router

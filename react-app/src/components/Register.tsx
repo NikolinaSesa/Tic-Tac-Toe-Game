@@ -9,8 +9,16 @@ import {
   Button,
   Grid,
   Link,
+  Alert,
+  AlertColor,
 } from "@mui/material";
 import { useState } from "react";
+import axios from "axios";
+
+interface ResultMessage {
+  result: null | AlertColor;
+  msg: string;
+}
 
 const Register = () => {
   const [player, setPlayer] = useState({
@@ -18,16 +26,47 @@ const Register = () => {
     email: "",
     password: "",
   });
-  const handleSubmit = () => {
-    console.log(player);
+  const [registrationResult, setRegistrationResult] = useState<ResultMessage>({
+    result: null,
+    msg: "",
+  });
+  const handleRegister = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    event.preventDefault();
+
+    axios
+      .post("http://localhost:5000/api/players/", player)
+      .then(({ data }) => {
+        setRegistrationResult({
+          ...registrationResult,
+          result: "success",
+          msg: `Welcome ${data.name}. Login and start the game!`,
+        });
+      })
+      .catch((err) => {
+        console.log(err.response.data);
+        setRegistrationResult({
+          ...registrationResult,
+          result: "error",
+          msg: `${err.response.data}`,
+        });
+      });
   };
   return (
     <>
       <Container maxWidth="xs">
         <CssBaseline />
+        <Box sx={{ mt: 20 }}>
+          {registrationResult.result && (
+            <Alert severity={registrationResult.result}>
+              {registrationResult.msg}
+            </Alert>
+          )}
+        </Box>
         <Box
           sx={{
-            mt: 20,
+            mt: 5,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -46,7 +85,6 @@ const Register = () => {
               label="Name"
               name="name"
               value={player.name}
-              autoFocus
               onChange={(event) =>
                 setPlayer({ ...player, name: event.target.value })
               }
@@ -59,7 +97,6 @@ const Register = () => {
               label="Email"
               name="email"
               value={player.email}
-              autoFocus
               onChange={(event) =>
                 setPlayer({ ...player, email: event.target.value })
               }
@@ -81,7 +118,7 @@ const Register = () => {
               fullWidth
               variant="outlined"
               sx={{ mt: 3, mb: 2 }}
-              onClick={handleSubmit}
+              onClick={handleRegister}
             >
               Register
             </Button>
