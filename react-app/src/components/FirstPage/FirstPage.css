@@ -1,0 +1,19 @@
+body{
+    margin: 0;
+}
+
+.div {
+    display: flex;
+}
+
+.sidebarDiv {
+    height: 100vh;
+    width: 250px;
+    background: white;
+}
+
+.mainDiv{
+    flex: 1;
+    padding: 10px;
+    background: black;
+}

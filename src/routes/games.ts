@@ -1,10 +1,11 @@
 import auth, {ICustomReq} from "../middlewares/auth";
 import Game, { IGame, IMove } from "../models/games";
 import express, { Router, Request, Response } from 'express'
+import { io } from "index";
 
 const router: Router = Router()
 
-//showing all the moves
+//get games 
 router.get('/', async (req: Request, res: Response) => {
     const games = await Game.find({}).populate([{path: 'player1', select: '-password'}, {path: 'player2', select: '-password'}])
     return res.send(games)
@@ -23,7 +24,7 @@ router.post('/', auth, async (req: Request, res: Response) => {
     const game = new Game({player1: (req as ICustomReq).player._id, currentPlayer: (req as ICustomReq).player._id})
     await game.save()
 
-    res.send(game)
+    res.send(game.populate({path: 'player1', select: '-password'}))
 })
 
 //join an existing game

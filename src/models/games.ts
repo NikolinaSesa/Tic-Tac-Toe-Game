@@ -3,8 +3,7 @@ import mongoose from "mongoose";
 enum Sign { X = 'x', O = 'o' }
 
 export interface IMove{
-    x: number,
-    y: number,
+    spot: number,
     sign: string,
     player: mongoose.Types.ObjectId
 }
@@ -14,7 +13,7 @@ export interface IGame extends mongoose.Document {
     player2?: mongoose.Types.ObjectId,
     winner?: mongoose.Types.ObjectId,
     currentPlayer?: mongoose.Types.ObjectId,
-    moves: mongoose.Types.DocumentArray<IMove> 
+    moves?: mongoose.Types.DocumentArray<IMove> 
 }
 
 const GameSchema = new mongoose.Schema<IGame>(
@@ -36,28 +35,25 @@ const GameSchema = new mongoose.Schema<IGame>(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Player'
         },
-        moves: [{
-            x: {
-                type: Number,
-                required: true,
-                min: 0,
-                max: 2
-            },
-            y: {
-                type: Number,
-                required: true,
-                min: 0,
-                max: 2
-            },
-            sign: {
-                type: typeof Sign,
-                required: true
-            },
-            player: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'Player'
-            }
-        }]
+        moves: {
+            type: [{
+                spot: {
+                    type: Number,
+                    required: true,
+                    min: 0,
+                    max: 8
+                },
+                sign: {
+                    type: typeof Sign,
+                    required: true
+                },
+                player: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: 'Player'
+                }
+            }],
+            maxlength: 9
+        }
     },
     {
         timestamps: true
