@@ -22,9 +22,9 @@ router.get('/:id', async (req: Request, res: Response) => {
 //create a new game
 router.post('/', auth, async (req: Request, res: Response) => {
     const game = new Game({player1: (req as ICustomReq).player._id, currentPlayer: (req as ICustomReq).player._id})
-    await game.save()
+    await (await game.save()).populate({path: 'player1', select: '-password'})
 
-    res.send(game.populate({path: 'player1', select: '-password'}))
+    res.send(game)
 })
 
 //join an existing game

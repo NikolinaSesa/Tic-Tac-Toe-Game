@@ -1,28 +1,9 @@
 import axios from "axios";
-//import { io } from "socket.io-client";
 import { useEffect, useState } from "react";
 import Sidebar from "../Sidebar";
 import "./FirstPage.css";
-import Board from "../Board/Board";
-import Game from "../Games/Games";
-
-interface IPlayer {
-  _id: string;
-  name: string;
-  email: string;
-}
-
-interface IGame {
-  _id: string;
-  player1: IPlayer;
-  player2: IPlayer;
-}
-
-interface IMove {
-  spot: number | null;
-  sing: string | null;
-  player: string | "";
-}
+import Board, { IPlayer, IGame } from "../Board/Board";
+import Games from "../Games/Games";
 
 const FirstPage = () => {
   const [player, setPlayer] = useState<IPlayer>({
@@ -30,10 +11,6 @@ const FirstPage = () => {
     name: "",
     email: "",
   });
-
-  const [createButton, setCreateButton] = useState(false);
-  const [joinButton, setJoinButton] = useState(false);
-  const [historyButton, setHistoryButton] = useState(false);
 
   const [game, setGame] = useState<IGame>({
     _id: "",
@@ -49,6 +26,13 @@ const FirstPage = () => {
     },
   });
 
+  const [games, setGames] = useState<IGame[]>([]);
+
+  const [showButtons, setShowButtons] = useState(true);
+  const [showGameBoard, setShowGameBoard] = useState(false);
+  const [showGames, setShowGames] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+
   useEffect(() => {
     const controller = new AbortController();
     axios
@@ -58,14 +42,14 @@ const FirstPage = () => {
           "x-auth-token": localStorage.getItem("accessToken"),
         },
       })
-      .then(({ data }) =>
+      .then(({ data }) => {
         setPlayer({
           ...player,
           _id: data._id,
           name: data.name,
           email: data.email,
-        })
-      )
+        });
+      })
       .catch((err) => console.log(err.response.data));
     return () => controller.abort();
   }, []);
@@ -73,15 +57,13 @@ const FirstPage = () => {
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     setPlayer({ ...player, _id: "", name: "", email: "" });
-    setCreateButton(false);
-    setJoinButton(false);
-    setHistoryButton(false);
+    window.location.href = "../Login";
   };
 
   const handleCreateNewGame = () => {
     const token = localStorage.getItem("accessToken");
     axios
-      .post(
+      .post<IGame>(
         "http://localhost:5000/api/games/",
         {},
         {
@@ -91,50 +73,97 @@ const FirstPage = () => {
         }
       )
       .then(({ data }) => {
-        console.log(data);
         setGame({
           ...game,
           _id: data._id,
-          player1: data.player1,
+          player1: {
+            ...game.player1,
+            _id: data.player1._id,
+            name: data.player1.name,
+            email: data.player1.email,
+          },
+          player2: {
+            ...game.player2,
+            _id: "",
+            name: "",
+            email: "",
+          },
         });
+
+        setShowButtons(false);
+        setShowGameBoard(true);
       })
       .catch((err) => console.log(err.response.data));
-
-    setJoinButton(false);
-    setHistoryButton(false);
-    setCreateButton(true);
   };
 
-  const handleJoin = () => {
-    // const token = localStorage.getItem("accessToken");
-    // axios
-    //   .put(
-    //     "http://localhost:5000/api/games/",
-    //     {},
-    //     {
-    //       headers: {
-    //         "x-auth-token": token,
-    //       },
-    //     }
-    //   )
-    //   .then(({ data }) => {
-    //     console.log(data);
-    //     setGame({
-    //       ...game,
-    //       player2: data.player2,
-    //     });
-    //   })
-    //   .catch((err) => console.log(err.response.data));
+  const handleJoining = () => {
+    axios
+      .get<IGame[]>("http://localhost:5000/api/games/", {
+        headers: {
+          "x-auth-token": localStorage.getItem("accessToken"),
+        },
+      })
+      .then(({ data }) => {
+        setGames(data.filter((game) => !game.player2));
 
-    setCreateButton(false);
-    setHistoryButton(false);
-    setJoinButton(true);
+        setShowButtons(false);
+        setShowGames(true);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleJoin = (gameId: string) => {
+    const token = localStorage.getItem("accessToken");
+    axios
+      .put<IGame>(
+        "http://localhost:5000/api/games/" + gameId,
+        {},
+        {
+          headers: {
+            "x-auth-token": token,
+          },
+        }
+      )
+      .then(({ data }) => {
+        setGame({
+          ...game,
+          _id: data._id,
+          player1: {
+            ...game.player1,
+            _id: data.player1._id,
+            name: data.player1.name,
+            email: data.player1.email,
+          },
+          player2: {
+            ...game.player2,
+            _id: data.player2._id,
+            name: data.player2.name,
+            email: data.player2.email,
+          },
+        });
+
+        setShowGameBoard(true);
+        setShowGames(false);
+      })
+      .catch((err) => console.log(err.response.data));
   };
 
   const handleHistory = () => {
-    setCreateButton(false);
-    setJoinButton(false);
-    setHistoryButton(true);
+    axios
+      .get<IGame[]>("http://localhost:5000/api/games/", {
+        headers: {
+          "x-auth-token": localStorage.getItem("accessToken"),
+        },
+      })
+      .then(({ data }) => {
+        setGames(data);
+
+        setShowButtons(false);
+        setShowGameBoard(false);
+        setShowGames(false);
+        setShowHistory(true);
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -145,13 +174,29 @@ const FirstPage = () => {
             name={player.name}
             onLogout={handleLogout}
             onCreateNewGame={handleCreateNewGame}
-            onJoin={handleJoin}
+            onJoin={handleJoining}
             onHistory={handleHistory}
           />
         </div>
         <div className="mainDiv">
-          {createButton && <Board game={game} />}
-          {joinButton && <Game />}
+          {showButtons && (
+            <div className="buttonDiv">
+              <button
+                id="createButton"
+                className="button"
+                onClick={handleCreateNewGame}
+              >
+                Create new game
+              </button>
+              <p>OR</p>
+              <button className="button" onClick={handleJoining}>
+                Join the game
+              </button>
+            </div>
+          )}
+          {showGameBoard && <Board game={game} />}
+          {showGames && <Games games={games} onClick={handleJoin} />}
+          {showHistory && <Games games={games} onClick={() => {}} />}
         </div>
       </div>
     </>

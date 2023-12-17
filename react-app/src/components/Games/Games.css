@@ -7,4 +7,10 @@
 
 .paper{
     cursor: pointer;
+    padding: 10px;
+    text-align: center;
+}
+
+.avatar {
+    margin: 0 auto;
 }

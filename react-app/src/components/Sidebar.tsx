@@ -16,6 +16,10 @@ const style = {
   bgcolor: "white",
 };
 
+const textStyle = {
+  fontFamily: "FreeMono, monospace",
+};
+
 interface Props {
   name: string;
   onLogout: () => void;
@@ -24,13 +28,7 @@ interface Props {
   onHistory: () => void;
 }
 
-const Sidebar = ({
-  name,
-  onLogout,
-  onCreateNewGame,
-  onJoin,
-  onHistory,
-}: Props) => {
+const Sidebar = ({ name, onLogout, onHistory }: Props) => {
   return (
     <>
       <List sx={style} component="nav">
@@ -40,32 +38,19 @@ const Sidebar = ({
               <AccountCircleIcon fontSize="medium" />
             </Avatar>
           </ListItemAvatar>
-          <ListItemText primary={name} />
+          <ListItemText primaryTypographyProps={textStyle} primary={name} />
         </ListItem>
         <Divider />
-        <ListItem button onClick={onCreateNewGame}>
-          <ListItemAvatar>
-            <Avatar>
-              <AddCircleOutlineOutlinedIcon fontSize="small" />
-            </Avatar>
-          </ListItemAvatar>
-          <ListItemText primary="Create a new game" />
-        </ListItem>
-        <ListItem button onClick={onJoin}>
-          <ListItemAvatar>
-            <Avatar>
-              <VideogameAssetOutlinedIcon fontSize="small" />
-            </Avatar>
-          </ListItemAvatar>
-          <ListItemText primary="Join the game " />
-        </ListItem>
         <ListItem button onClick={onHistory}>
           <ListItemAvatar>
             <Avatar>
               <GridOnOutlinedIcon fontSize="small" />
             </Avatar>
           </ListItemAvatar>
-          <ListItemText primary="Get a history" />
+          <ListItemText
+            primaryTypographyProps={textStyle}
+            primary="Get a history"
+          />
         </ListItem>
         <ListItem button onClick={onLogout}>
           <ListItemAvatar>
@@ -73,7 +58,7 @@ const Sidebar = ({
               <ExitToAppOutlinedIcon fontSize="small" />
             </Avatar>
           </ListItemAvatar>
-          <ListItemText primary="Logout" />
+          <ListItemText primaryTypographyProps={textStyle} primary="Logout" />
         </ListItem>
       </List>
     </>

@@ -1,5 +1,5 @@
 import express from 'express'
-import {Server} from 'socket.io'
+import { Server } from 'socket.io' 
 import http from 'http'
 import * as dotenv from 'dotenv'
 import cors from 'cors'
@@ -15,11 +15,28 @@ const port = process.env.PORT
 const mongoDB = process.env.MONGODB || ""
 
 const app = express()
+app.use(express.json())
+app.use(helmet())
+app.use(cors())
 const server = http.createServer(app)
-const io = new Server(server, {cors: {origin: "*"}})
+const io = new Server(server, {cors: {
+    origin: "http://localhost:5173",
+    methods: ['GET', 'POST']
+}})
+
+mongoose.connect(mongoDB)
+   .then(() => {
+       console.log('Connected to MongoDB... ')})
+   .catch(error => console.log('Could not connect to MongoDB...', error))
+
+server.listen(port, () => {console.log(`Listening on port ${port}...`)})
 
 io.on('connection', (socket) => {
     console.log(`User connected ${socket.id}`)
+
+    socket.on('send_hello_msg', (data) => {
+        socket.broadcast.emit('receive_msg', data)
+    })
 
     socket.on('disconnect', () => {
         console.log('user disconnected');
@@ -28,19 +45,11 @@ io.on('connection', (socket) => {
 
 export {io}
 
-app.use(express.json())
-app.use(helmet())
-app.use(cors())
 app.use('/api/players/', playerRouter)
 app.use('/api/games/', gameRouter)
 app.use('/api/auth/', authRouter)
 
-mongoose.connect(mongoDB)
-   .then(() => {
-       console.log('Connected to MongoDB... ')})
-   .catch(error => console.log('Could not connect to MongoDB...', error))
 
-server.listen(port, () => {console.log(`Listening on port ${port}...`)})
 
 
 
