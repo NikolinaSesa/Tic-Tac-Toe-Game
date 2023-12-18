@@ -1,13 +1,13 @@
 import auth, {ICustomReq} from "../middlewares/auth";
 import Game, { IGame, IMove } from "../models/games";
 import express, { Router, Request, Response } from 'express'
-import { io } from "index";
+import { io } from "../index";
 
 const router: Router = Router()
 
-//get games 
+//get finished games 
 router.get('/', async (req: Request, res: Response) => {
-    const games = await Game.find({}).populate([{path: 'player1', select: '-password'}, {path: 'player2', select: '-password'}])
+    const games = await Game.find({winner: {$exists: true}}).populate([{path: 'player1', select: '-password'}, {path: 'player2', select: '-password'}])
     return res.send(games)
 })
 
@@ -21,7 +21,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 
 //create a new game
 router.post('/', auth, async (req: Request, res: Response) => {
-    const game = new Game({player1: (req as ICustomReq).player._id, currentPlayer: (req as ICustomReq).player._id})
+    const game = new Game({player1: (req as ICustomReq).player._id})
     await (await game.save()).populate({path: 'player1', select: '-password'})
 
     res.send(game)
@@ -30,21 +30,16 @@ router.post('/', auth, async (req: Request, res: Response) => {
 //join an existing game
 router.put('/:id', auth, async (req: Request, res: Response) => {
     const game = await Game.findByIdAndUpdate({_id: req.params.id}, {$set: {player2: (req as ICustomReq).player._id}}, {new: true}).populate([{path:'player1', select: '-password'}, {path: 'player2', select: '-password'}])
+    io.emit("gameState", game)
     res.send(game)
 })
 
-//make a new move
-router.put('/make-a-move/:id', auth, async (req: Request, res: Response) => {
-    const move: IMove = req.body
-    let game = await Game.findById(req.params.id)
-    if(game?.currentPlayer != move.player) return res.status(400).send('Not your turn.')
-
-    game = await Game.findByIdAndUpdate(game.id, {$push: {moves: move}}, {new: true})
-
-    if(String(game?.currentPlayer) === String(game?.player1)) game = await Game.findByIdAndUpdate(game?.id, {currentPlayer: game?.player2}, {new: true})
-    else game = await Game.findByIdAndUpdate(game?.id, {currentPlayer: game?.player1}, {new: true})
-
-    res.send(game)
+//save game result
+router.put('/', auth, async (req: Request, res: Response) => {
+    let game = req.body;
+    game = await Game.findByIdAndUpdate({_id: game.id}, {$set: {winner: game.winner._id, moves: game.moves}}, {new: true});
+    res.send(game);
 })
+
 
 export default router

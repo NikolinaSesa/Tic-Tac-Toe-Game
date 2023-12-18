@@ -35,6 +35,7 @@ const FirstPage = () => {
 
   useEffect(() => {
     const controller = new AbortController();
+
     axios
       .get<IPlayer>("http://localhost:5000/api/players/currentPlayer", {
         signal: controller.signal,
@@ -57,7 +58,7 @@ const FirstPage = () => {
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     setPlayer({ ...player, _id: "", name: "", email: "" });
-    window.location.href = "../Login";
+    window.location.href = "../";
   };
 
   const handleCreateNewGame = () => {
@@ -195,8 +196,8 @@ const FirstPage = () => {
             </div>
           )}
           {showGameBoard && <Board game={game} />}
-          {showGames && <Games games={games} onClick={handleJoin} />}
-          {showHistory && <Games games={games} onClick={() => {}} />}
+          {showGames && <Games games={games} onClick={handleJoin} gameOver={false}/>}
+          {showHistory && <Games games={games} onClick={() => {}} gameOver={true}/>}
         </div>
       </div>
     </>

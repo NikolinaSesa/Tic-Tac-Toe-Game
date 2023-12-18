@@ -24,24 +24,23 @@ const io = new Server(server, {cors: {
     methods: ['GET', 'POST']
 }})
 
-mongoose.connect(mongoDB)
-   .then(() => {
-       console.log('Connected to MongoDB... ')})
-   .catch(error => console.log('Could not connect to MongoDB...', error))
-
-server.listen(port, () => {console.log(`Listening on port ${port}...`)})
-
 io.on('connection', (socket) => {
-    console.log(`User connected ${socket.id}`)
 
-    socket.on('send_hello_msg', (data) => {
-        socket.broadcast.emit('receive_msg', data)
+    socket.on("sendMove", (data) => {
+        socket.broadcast.emit("receiveMove", data);
     })
 
     socket.on('disconnect', () => {
         console.log('user disconnected');
     })
 })
+
+mongoose.connect(mongoDB)
+   .then(() => {
+       console.log('Connected to MongoDB... ')})
+   .catch(error => console.log('Could not connect to MongoDB...', error))
+
+server.listen(port, () => {console.log(`Listening on port ${port}...`)})
 
 export {io}
 

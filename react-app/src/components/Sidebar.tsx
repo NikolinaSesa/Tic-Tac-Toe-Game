@@ -7,8 +7,6 @@ import {
   ListItemText,
 } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
-import VideogameAssetOutlinedIcon from "@mui/icons-material/VideogameAssetOutlined";
 import GridOnOutlinedIcon from "@mui/icons-material/GridOnOutlined";
 import ExitToAppOutlinedIcon from "@mui/icons-material/ExitToAppOutlined";
 

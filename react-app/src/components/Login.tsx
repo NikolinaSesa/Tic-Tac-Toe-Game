@@ -43,7 +43,7 @@ const Login = () => {
           result: null,
           msg: "",
         });
-        window.location.href = "/";
+        window.location.href = "/firstPage";
       })
       .catch((err) => {
         console.log(err.response.data);

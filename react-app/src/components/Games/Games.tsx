@@ -23,9 +23,14 @@ interface IPlayer {
 interface Props {
   games: IGame[];
   onClick: (gameId: string) => void;
+  gameOver: Boolean;
 }
 
-const Games = ({ games, onClick }: Props) => {
+const textStyle = {
+  fontFamily: "FreeMono, monospace",
+};
+
+const Games = ({ games, onClick, gameOver }: Props) => {
   return (
     <>
       <div className="grid">
@@ -41,7 +46,7 @@ const Games = ({ games, onClick }: Props) => {
                   <SportsEsportsOutlinedIcon></SportsEsportsOutlinedIcon>
                 </Avatar>
                 <Typography>Join the game</Typography>
-                <Typography>Player 1: {val.player1.name}</Typography>
+                <Typography style={textStyle}>Player 1: {val.player1.name}</Typography>
               </Paper>
             </Grid>
           ))}
