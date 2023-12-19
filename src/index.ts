@@ -25,6 +25,7 @@ const io = new Server(server, {cors: {
 }})
 
 io.on('connection', (socket) => {
+    console.log("Connected...", socket.id)
 
     socket.on("sendMove", (data) => {
         socket.broadcast.emit("receiveMove", data);

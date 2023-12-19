@@ -8,12 +8,6 @@ interface IGame {
   player2: IPlayer;
 }
 
-interface IMove {
-  spot: number | null;
-  sing: string | null;
-  player: string | "";
-}
-
 interface IPlayer {
   _id: string;
   name: string;
@@ -23,14 +17,10 @@ interface IPlayer {
 interface Props {
   games: IGame[];
   onClick: (gameId: string) => void;
-  gameOver: Boolean;
+  finishedGames: Boolean;
 }
 
-const textStyle = {
-  fontFamily: "FreeMono, monospace",
-};
-
-const Games = ({ games, onClick, gameOver }: Props) => {
+const Games = ({ games, onClick, finishedGames }: Props) => {
   return (
     <>
       <div className="grid">
@@ -45,8 +35,9 @@ const Games = ({ games, onClick, gameOver }: Props) => {
                 <Avatar className="avatar">
                   <SportsEsportsOutlinedIcon></SportsEsportsOutlinedIcon>
                 </Avatar>
-                <Typography>Join the game</Typography>
-                <Typography style={textStyle}>Player 1: {val.player1.name}</Typography>
+                {!finishedGames && <Typography sx={{fontFamily: "FreeMono, monospace", fontWeight: 'bold'}}>Join the game</Typography>}
+                <Typography sx={{fontFamily: "FreeMono, monospace"}}><b>Player 1:</b> {val.player1.name}</Typography>
+                {finishedGames && <Typography sx={{fontFamily: "FreeMono, monospace"}}><b>Player 2:</b> {val.player2.name}</Typography>}
               </Paper>
             </Grid>
           ))}

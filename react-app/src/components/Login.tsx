@@ -56,11 +56,12 @@ const Login = () => {
   };
   return (
     <>
-      <Container maxWidth="xs">
+      <div style={{width: "100%", height: "100vh", display: "flex", paddingTop: '50px', background: 'black'}}>
+      <Container maxWidth="xs" sx={{height: '525px' , background: 'white', borderRadius: '10px', border: "5px solid rgb(58, 56, 55)"}}>
         <CssBaseline />
-        <Box sx={{ mt: 20 }}>
+        <Box sx={{ mt: 5}}>
           {registrationResult.result && (
-            <Alert severity={registrationResult.result}>
+            <Alert sx={{fontFamily: "FreeMono, monospace"}} severity={registrationResult.result}>
               {registrationResult.msg}
             </Alert>
           )}
@@ -68,16 +69,18 @@ const Login = () => {
         <Box
           sx={{
             mt: 5,
+            mb: 5,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            fontFamily: "FreeMono, monospace",
           }}
         >
           <Avatar sx={{ m: 1 }}>
             <GiPadlock />
           </Avatar>
-          <Typography variant="h5">Login</Typography>
-          <Box sx={{ mt: 1 }}>
+          <Typography sx={{fontFamily: "FreeMono, monospace"}} variant="h5">Login</Typography>
+          <Box sx={{ mt: 1}}>
             <TextField
               margin="normal"
               required
@@ -89,6 +92,9 @@ const Login = () => {
               onChange={(event) =>
                 setPlayer({ ...player, email: event.target.value })
               }
+
+              InputLabelProps={{style: {fontFamily: "FreeMono, monospace"}}}
+              inputProps={{style: {fontFamily: "FreeMono, monospace"}}}
             />
             <TextField
               margin="normal"
@@ -102,11 +108,14 @@ const Login = () => {
               onChange={(event) =>
                 setPlayer({ ...player, password: event.target.value })
               }
+
+              InputLabelProps={{style: {fontFamily: "FreeMono, monospace"}}}
+              inputProps={{style: {fontFamily: "FreeMono, monospace"}}}
             />
             <Button
               fullWidth
               variant="outlined"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mt: 3, mb: 2, fontFamily: "FreeMono, monospace" }}
               onClick={handleLogin}
             >
               Login
@@ -119,6 +128,7 @@ const Login = () => {
           </Box>
         </Box>
       </Container>
+      </div>
     </>
   );
 };

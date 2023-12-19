@@ -99,7 +99,7 @@ const FirstPage = () => {
 
   const handleJoining = () => {
     axios
-      .get<IGame[]>("http://localhost:5000/api/games/", {
+      .get<IGame[]>("http://localhost:5000/api/games/existingGames", {
         headers: {
           "x-auth-token": localStorage.getItem("accessToken"),
         },
@@ -167,6 +167,20 @@ const FirstPage = () => {
       .catch((err) => console.log(err));
   };
 
+  const handleHistoryOfGame = (id: String) => {
+    axios
+      .get<IGame>("http://localhost:5000/api/games/"+id, {
+        headers: {
+          'x-auth-token': localStorage.getItem('accessToken')
+        }
+      })
+      .then(({data}) => {
+        setGame(data);
+        console.log(data)
+      })
+      .catch((err) => console.log(err))
+  }
+
   return (
     <>
       <div className="div">
@@ -196,8 +210,8 @@ const FirstPage = () => {
             </div>
           )}
           {showGameBoard && <Board game={game} />}
-          {showGames && <Games games={games} onClick={handleJoin} gameOver={false}/>}
-          {showHistory && <Games games={games} onClick={() => {}} gameOver={true}/>}
+          {showGames && <Games games={games} onClick={handleJoin} finishedGames={false}/>}
+          {showHistory && <Games games={games} onClick={handleHistoryOfGame} finishedGames={true}/>}
         </div>
       </div>
     </>
