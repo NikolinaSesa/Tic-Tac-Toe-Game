@@ -15,9 +15,8 @@ body{
 
 .mainDiv{
     flex: 1;
-    padding: 10px;
     background: black;
-    /* height: 100vh*/
+    height: 100vh;
 }
 
 .button{ 

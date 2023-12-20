@@ -1,0 +1,17 @@
+.boardDiv{
+    border: 4px solid rgb(34, 32, 32);
+    border-radius: 10px;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto ;
+    display: grid;
+    grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+}
+
+.squareDiv{
+    background: rgb(168, 167, 167);
+    border: 2px solid rgb(58, 56, 55);
+    font-size: 30px;
+    font-weight: 800;
+    padding: 10px;
+}

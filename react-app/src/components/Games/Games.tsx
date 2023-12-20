@@ -1,6 +1,7 @@
 import { Avatar, Grid, Paper, Typography } from "@mui/material";
 import "./Games.css";
 import SportsEsportsOutlinedIcon from "@mui/icons-material/SportsEsportsOutlined";
+import { useState } from "react";
 
 interface IGame {
   _id: string;
@@ -21,11 +22,35 @@ interface Props {
 }
 
 const Games = ({ games, onClick, finishedGames }: Props) => {
+
+  const [searchItem, setSearchItem] = useState('');
+  const [filteredGames, setFilteredGames] = useState(games);
+
+  const searchHandler = (e : React.ChangeEvent<HTMLInputElement>) => {
+    const searchItem = e.target.value
+    setSearchItem(searchItem);
+
+    const filteredGames = games.filter((game) => game.player1.name.toLowerCase().includes(searchItem.toLowerCase()) ||
+                                        game.player2.name.toLowerCase().includes(searchItem.toLowerCase())
+                                      )
+
+    setFilteredGames(filteredGames)
+  }
+
   return (
     <>
+      <div className="search">
+        <input
+            type="text"
+            placeholder="Search"
+            className="searchBox"
+            value={searchItem}
+            onChange={searchHandler}
+        />
+      </div>
       <div className="grid">
         <Grid container spacing={4}>
-          {games.map((val) => (
+          {filteredGames.map((val) => (
             <Grid item key={val._id} xs={4}>
               <Paper
                 className="paper"

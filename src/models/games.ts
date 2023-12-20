@@ -1,7 +1,5 @@
 import mongoose from "mongoose";
 
-enum Sign { X = 'X', O = 'O' }
-
 export interface IMove{
     spot: number,
     sign: string,
@@ -39,7 +37,7 @@ const GameSchema = new mongoose.Schema<IGame>(
                     max: 8
                 },
                 sign: {
-                    type: typeof Sign,
+                    type: String,
                     required: true
                 },
                 player: {

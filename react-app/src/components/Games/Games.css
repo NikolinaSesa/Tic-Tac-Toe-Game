@@ -1,6 +1,6 @@
 .grid{
     width: 80vh;
-    height: 90vh;
+    height: 70vh;
     padding: 30px;
     margin: 0 auto;
 }
@@ -13,4 +13,19 @@
 
 .avatar {
     margin: 0 auto;
+}
+
+.search {
+    display: flex;
+    padding: 30px;
+}
+
+.searchBox{
+    padding: 10px;
+    margin: 0 auto;
+    width: 90%;
+    border-radius: 10px;
+    font-size: medium;
+    font-family: FreeMono, monospace;
+
 }

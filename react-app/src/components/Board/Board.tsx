@@ -6,6 +6,7 @@ import axios from "axios";
 import { io } from "socket.io-client";
 import Typography from "@mui/material/Typography/Typography";
 import { Box, Button } from "@mui/material";
+import { Date } from "mongoose";
 
 export interface IGame {
   _id: string;
@@ -13,11 +14,12 @@ export interface IGame {
   player2: IPlayer;
   winner?: IPlayer | null;
   moves?: IMove[];
+  createdAt?: Date
 }
 
 export interface IMove {
   spot: number | null;
-  sing: string | null;
+  sign: string | null;
   player: IPlayer | null;
 }
 
@@ -29,6 +31,7 @@ export interface IPlayer {
 
 interface Props {
   game: IGame;
+  player: IPlayer;
 }
 
 const style = {
@@ -45,7 +48,7 @@ const style = {
   p: 4,
 }
 
-const Board = ({ game }: Props) => {
+const Board = ({ game, player }: Props) => {
   const socket = io("http://localhost:5000");
   const [gameState, setGameState] = useState<IGame>(game)
 
@@ -55,9 +58,12 @@ const Board = ({ game }: Props) => {
   const [moves, setMoves] = useState<IMove[]>([]);
   const [winner, setWinner] = useState<String | null>(null);
 
+  const [currentPlayer, setCurrentPlayer] = useState<String | null>(null)
+
   useEffect(() => {
     socket.on("gameState", (data) => {
       setGameState(data)
+      setCurrentPlayer(data.player1._id)
     })
 
     socket.on("receiveMove", (data) => {
@@ -65,10 +71,14 @@ const Board = ({ game }: Props) => {
       setMoves(data.movesCopy);
       setXIsNext(data.xIsNext);
       setWinner(getWinner(data.boardCopy));
+      setCurrentPlayer(data.currentPlayer)
     })
   }, [])
 
   const handleClick = (i: number) => {
+   
+    if(currentPlayer != player._id) return;
+
     const boardCopy = [...board];
     const movesCopy = [...moves];
 
@@ -76,14 +86,17 @@ const Board = ({ game }: Props) => {
 
     if(xIsNext) {
       boardCopy[i] = "X";
-      movesCopy.push({sing: boardCopy[i], spot: i, player: game.player1})
+      movesCopy.push({sign: "X", spot: i, player: game.player1})
     }
     else{
       boardCopy[i] = "O";
-      movesCopy.push({sing: boardCopy[i], spot: i, player: game.player2})
+      movesCopy.push({sign: "O", spot: i, player: game.player2})
     }
 
-    socket.emit("sendMove", {"boardCopy": boardCopy, "movesCopy": movesCopy, "xIsNext": !xIsNext})
+    let nextPlayer : String = "";
+    currentPlayer === gameState.player1._id ? nextPlayer = gameState.player2._id : nextPlayer = gameState.player1._id
+
+    socket.emit("sendMove", {"boardCopy": boardCopy, "movesCopy": movesCopy, "xIsNext": !xIsNext, "currentPlayer": nextPlayer})
 
   };
 
@@ -95,6 +108,8 @@ const Board = ({ game }: Props) => {
       winner: winner === "X" ? gameState.player1 : gameState.player2,
       moves: moves
     }
+
+    console.log(game)
 
     axios.put("http://localhost:5000/api/games/", game, {
       headers: {
@@ -127,9 +142,9 @@ const Board = ({ game }: Props) => {
         onClose={handleExit}
       >
           <Box sx={style}>
-            <Typography variant="h5" sx={{fontFamily: 'FreeMono, monospace'}}>GAME OVER</Typography>
-            <Typography>Winner is {winner}</Typography>
-            <Button onClick={handleExit}>Exit</Button>
+            <Typography variant="h6" sx={{fontFamily: 'FreeMono, monospace'}}>GAME OVER</Typography>
+            <Typography variant="h5" sx={{fontFamily: 'FreeMono, monospace', mt: '5px'}}>Winner is {winner}</Typography>
+            <Button variant="outlined" sx={{fontFamily: 'FreeMono, monospace', mt: '15px', width: '150px'}} onClick={handleExit}>Exit</Button>
           </Box>
       </Modal>
     </>

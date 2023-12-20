@@ -4,6 +4,7 @@ import Sidebar from "../Sidebar";
 import "./FirstPage.css";
 import Board, { IPlayer, IGame } from "../Board/Board";
 import Games from "../Games/Games";
+import Game from "../Game/Game";
 
 const FirstPage = () => {
   const [player, setPlayer] = useState<IPlayer>({
@@ -32,6 +33,7 @@ const FirstPage = () => {
   const [showGameBoard, setShowGameBoard] = useState(false);
   const [showGames, setShowGames] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  const [showGame, setShowGame] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -176,9 +178,13 @@ const FirstPage = () => {
       })
       .then(({data}) => {
         setGame(data);
-        console.log(data)
+        setShowGame(true)
       })
       .catch((err) => console.log(err))
+  }
+
+  const handleExit = (show: boolean) => {
+    setShowGame(show);
   }
 
   return (
@@ -209,9 +215,10 @@ const FirstPage = () => {
               </button>
             </div>
           )}
-          {showGameBoard && <Board game={game} />}
+          {showGameBoard && <Board game={game} player={player}/>}
           {showGames && <Games games={games} onClick={handleJoin} finishedGames={false}/>}
           {showHistory && <Games games={games} onClick={handleHistoryOfGame} finishedGames={true}/>}
+          {showGame && <Game game={game} onExit={handleExit}></Game>}
         </div>
       </div>
     </>
