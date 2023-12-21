@@ -31,6 +31,10 @@ io.on('connection', (socket) => {
         socket.broadcast.emit("receiveMove", data);
     })
 
+    socket.on("reset", () => {
+        socket.broadcast.emit("reset")
+    })
+
     socket.on('disconnect', () => {
         console.log('user disconnected');
     })

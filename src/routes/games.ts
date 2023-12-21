@@ -2,6 +2,8 @@ import auth, {ICustomReq} from "../middlewares/auth";
 import Game, { IGame, IMove } from "../models/games";
 import express, { Router, Request, Response } from 'express'
 import { io } from "../index";
+import { IPlayer } from "models/players";
+import mongoose from "mongoose";
 
 const router: Router = Router()
 
@@ -27,7 +29,8 @@ router.get('/:id', auth, async (req: Request, res: Response) => {
 
 //create a new game
 router.post('/', auth, async (req: Request, res: Response) => {
-    const game = new Game({player1: (req as ICustomReq).player._id})
+    const body: IGame = req.body as IGame
+    const game = new Game({player1: (req as ICustomReq).player._id, multiplayer: body.multiplayer})
     await (await game.save()).populate({path: 'player1', select: '-password'})
 
     res.send(game)

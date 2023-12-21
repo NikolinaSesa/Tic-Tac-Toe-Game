@@ -6,7 +6,8 @@ import axios from "axios";
 import { io } from "socket.io-client";
 import Typography from "@mui/material/Typography/Typography";
 import { Box, Button } from "@mui/material";
-import { Date } from "mongoose";
+import RestartAltOutlinedIcon from '@mui/icons-material/RestartAltOutlined';
+import Avatar from "@mui/material/Avatar";
 
 export interface IGame {
   _id: string;
@@ -14,7 +15,7 @@ export interface IGame {
   player2: IPlayer;
   winner?: IPlayer | null;
   moves?: IMove[];
-  createdAt?: Date
+  multiplayer?: boolean;
 }
 
 export interface IMove {
@@ -73,6 +74,13 @@ const Board = ({ game, player }: Props) => {
       setWinner(getWinner(data.boardCopy));
       setCurrentPlayer(data.currentPlayer)
     })
+
+    socket.on("reset", () => {
+      setBoard(Array<string | null>(9).fill(null));
+      setMoves([])
+      setCurrentPlayer(gameState.player1._id);
+      setXIsNext(true);
+    })
   }, [])
 
   const handleClick = (i: number) => {
@@ -93,7 +101,7 @@ const Board = ({ game, player }: Props) => {
       movesCopy.push({sign: "O", spot: i, player: game.player2})
     }
 
-    let nextPlayer : String = "";
+    let nextPlayer: String = "";
     currentPlayer === gameState.player1._id ? nextPlayer = gameState.player2._id : nextPlayer = gameState.player1._id
 
     socket.emit("sendMove", {"boardCopy": boardCopy, "movesCopy": movesCopy, "xIsNext": !xIsNext, "currentPlayer": nextPlayer})
@@ -101,7 +109,7 @@ const Board = ({ game, player }: Props) => {
   };
 
   const handleExit = () => {
-    const game: IGame = {
+    const finishedGame: IGame = {
       _id: gameState._id,
       player1: gameState.player1,
       player2: gameState.player2,
@@ -109,9 +117,7 @@ const Board = ({ game, player }: Props) => {
       moves: moves
     }
 
-    console.log(game)
-
-    axios.put("http://localhost:5000/api/games/", game, {
+    axios.put("http://localhost:5000/api/games/", finishedGame, {
       headers: {
         'x-auth-token': localStorage.getItem('accessToken')
       }
@@ -120,8 +126,19 @@ const Board = ({ game, player }: Props) => {
     }).catch((err) => console.log(err))
   }
 
+  const handleReset = () => {
+    
+    socket.emit('reset')
+
+  }
+
   return (
     <>
+      <div className="resetDiv">
+        <Avatar sx={{cursor: 'pointer'}} onClick={handleReset}>
+          <RestartAltOutlinedIcon></RestartAltOutlinedIcon>
+        </Avatar>
+      </div>
       <div className="board">
         {board.map((val, i) => (
           <Square key={i} value={val} i={i} onClick={handleClick}></Square>

@@ -5,6 +5,7 @@ import "./FirstPage.css";
 import Board, { IPlayer, IGame } from "../Board/Board";
 import Games from "../Games/Games";
 import Game from "../Game/Game";
+import SinglePlayerBoard from "../SinglePlayerBoard";
 
 const FirstPage = () => {
   const [player, setPlayer] = useState<IPlayer>({
@@ -34,6 +35,7 @@ const FirstPage = () => {
   const [showGames, setShowGames] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [showGame, setShowGame] = useState(false);
+  const [showSinglePlayerBoard, setShowSinglePlayerBoard] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -63,12 +65,22 @@ const FirstPage = () => {
     window.location.href = "../";
   };
 
+  const handleHome = () => {
+    setShowButtons(true);
+    setShowGameBoard(false);
+    setShowGames(false);
+    setShowHistory(false);
+    setShowSinglePlayerBoard(false);
+  }
+
   const handleCreateNewGame = () => {
     const token = localStorage.getItem("accessToken");
     axios
       .post<IGame>(
         "http://localhost:5000/api/games/",
-        {},
+        {
+          multiplayer: true
+        },
         {
           headers: {
             "x-auth-token": token,
@@ -76,6 +88,7 @@ const FirstPage = () => {
         }
       )
       .then(({ data }) => {
+
         setGame({
           ...game,
           _id: data._id,
@@ -128,6 +141,7 @@ const FirstPage = () => {
         }
       )
       .then(({ data }) => {
+
         setGame({
           ...game,
           _id: data._id,
@@ -164,6 +178,7 @@ const FirstPage = () => {
         setShowButtons(false);
         setShowGameBoard(false);
         setShowGames(false);
+        setShowSinglePlayerBoard(false);
         setShowHistory(true);
       })
       .catch((err) => console.log(err));
@@ -187,6 +202,39 @@ const FirstPage = () => {
     setShowGame(show);
   }
 
+  const handlePlayAlone = () => {
+    const token = localStorage.getItem("accessToken");
+    axios
+      .post<IGame>(
+        "http://localhost:5000/api/games/",
+        {
+          multiplayer: false
+        },
+        {
+          headers: {
+            "x-auth-token": token,
+          },
+        }
+      )
+      .then(({ data }) => {
+
+        setGame({
+          ...game,
+          _id: data._id,
+          player1: {
+            ...game.player1,
+            _id: data.player1._id,
+            name: data.player1.name,
+            email: data.player1.email,
+          },
+        });
+
+        setShowButtons(false);
+        setShowSinglePlayerBoard(true);
+      })
+      .catch((err) => console.log(err.response.data));
+  }
+
   return (
     <>
       <div className="div">
@@ -197,17 +245,24 @@ const FirstPage = () => {
             onCreateNewGame={handleCreateNewGame}
             onJoin={handleJoining}
             onHistory={handleHistory}
+            onHome={handleHome}
           />
         </div>
         <div className="mainDiv">
           {showButtons && (
             <div className="buttonDiv">
               <button
-                id="createButton"
                 className="button"
                 onClick={handleCreateNewGame}
               >
                 Create new game
+              </button>
+              <p>OR</p>
+              <button
+                className="button"
+                onClick={handlePlayAlone}
+              >
+                Play alone
               </button>
               <p>OR</p>
               <button className="button" onClick={handleJoining}>
@@ -219,6 +274,7 @@ const FirstPage = () => {
           {showGames && <Games games={games} onClick={handleJoin} finishedGames={false}/>}
           {showHistory && <Games games={games} onClick={handleHistoryOfGame} finishedGames={true}/>}
           {showGame && <Game game={game} onExit={handleExit}></Game>}
+          {showSinglePlayerBoard && <SinglePlayerBoard game={game}></SinglePlayerBoard>}
         </div>
       </div>
     </>

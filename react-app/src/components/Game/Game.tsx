@@ -23,12 +23,6 @@ const style = {
 
 const Game = ({game, onExit}: Props) => {
 
-    const htmlDivs = Array<any>(9).fill(null)
-
-    for (let i = 0; i < 9; i++){
-        htmlDivs.push(<div className="squareDiv">{i}</div>);
-    }
-
     return(
         <>
             <Modal open={true}>
@@ -39,7 +33,7 @@ const Game = ({game, onExit}: Props) => {
                     <Typography variant="h6" sx={{fontFamily: 'FreeMono, monospace', mt: '10px'}}><b>Winner: </b>{game.winner?.name}</Typography>
                     <Typography variant="h6" sx={{fontFamily: 'FreeMono, monospace', mt: '10px'}}><b>Moves: </b></Typography>
                     <div className="boardDiv">
-                        {htmlDivs}
+                        
                     </div>
                     <Button variant="outlined" sx={{fontFamily: 'FreeMono, monospace', mt: '40px', width: '150px'}} onClick={() => onExit(false)}>Exit</Button> 
                 </Box>

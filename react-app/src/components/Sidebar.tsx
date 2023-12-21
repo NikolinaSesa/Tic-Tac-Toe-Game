@@ -9,6 +9,7 @@ import {
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import GridOnOutlinedIcon from "@mui/icons-material/GridOnOutlined";
 import ExitToAppOutlinedIcon from "@mui/icons-material/ExitToAppOutlined";
+import VideogameAssetOutlinedIcon from '@mui/icons-material/VideogameAssetOutlined';
 
 const style = {
   bgcolor: "white",
@@ -24,9 +25,10 @@ interface Props {
   onCreateNewGame: () => void;
   onJoin: () => void;
   onHistory: () => void;
+  onHome: () => void;
 }
 
-const Sidebar = ({ name, onLogout, onHistory }: Props) => {
+const Sidebar = ({ name, onLogout, onHistory, onHome }: Props) => {
   return (
     <>
       <List sx={style} component="nav">
@@ -39,6 +41,17 @@ const Sidebar = ({ name, onLogout, onHistory }: Props) => {
           <ListItemText primaryTypographyProps={textStyle} primary={name} />
         </ListItem>
         <Divider />
+        <ListItem button onClick={onHome}>
+          <ListItemAvatar>
+            <Avatar>
+              <VideogameAssetOutlinedIcon fontSize="small" />
+            </Avatar>
+          </ListItemAvatar>
+          <ListItemText
+            primaryTypographyProps={textStyle}
+            primary="Home"
+          />
+        </ListItem>
         <ListItem button onClick={onHistory}>
           <ListItemAvatar>
             <Avatar>
