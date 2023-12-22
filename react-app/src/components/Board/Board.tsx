@@ -8,12 +8,13 @@ import Typography from "@mui/material/Typography/Typography";
 import { Box, Button } from "@mui/material";
 import RestartAltOutlinedIcon from '@mui/icons-material/RestartAltOutlined';
 import Avatar from "@mui/material/Avatar";
+import { token } from "../FirstPage/FirstPage";
 
 export interface IGame {
   _id: string;
   player1: IPlayer;
   player2: IPlayer;
-  winner?: IPlayer | null;
+  winner?: String | null;
   moves?: IMove[];
   multiplayer?: boolean;
 }
@@ -21,7 +22,7 @@ export interface IGame {
 export interface IMove {
   spot: number | null;
   sign: string | null;
-  player: IPlayer | null;
+  player?: IPlayer | null;
 }
 
 export interface IPlayer {
@@ -33,6 +34,7 @@ export interface IPlayer {
 interface Props {
   game: IGame;
   player: IPlayer;
+  onExit: () => void
 }
 
 const style = {
@@ -49,7 +51,7 @@ const style = {
   p: 4,
 }
 
-const Board = ({ game, player }: Props) => {
+const Board = ({ game, player, onExit }: Props) => {
   const socket = io("http://localhost:5000");
   const [gameState, setGameState] = useState<IGame>(game)
 
@@ -113,16 +115,16 @@ const Board = ({ game, player }: Props) => {
       _id: gameState._id,
       player1: gameState.player1,
       player2: gameState.player2,
-      winner: winner === "X" ? gameState.player1 : gameState.player2,
+      winner: winner,
       moves: moves
     }
 
     axios.put("http://localhost:5000/api/games/", finishedGame, {
       headers: {
-        'x-auth-token': localStorage.getItem('accessToken')
+        'x-auth-token': token
       }
     }).then(() => {
-      window.location.href='/firstPage';
+      onExit();
     }).catch((err) => console.log(err))
   }
 

@@ -12,7 +12,7 @@ import authRouter from './routes/auth'
 dotenv.config()
 
 const port = process.env.PORT
-const mongoDB = process.env.MONGODB || ""
+const mongoDB = process.env.MONGODB || "mongodb://localhost:27017"
 
 const app = express()
 app.use(express.json())
@@ -20,8 +20,7 @@ app.use(helmet())
 app.use(cors())
 const server = http.createServer(app)
 const io = new Server(server, {cors: {
-    origin: "http://localhost:5173",
-    methods: ['GET', 'POST']
+    origin: "http://localhost:5173"
 }})
 
 io.on('connection', (socket) => {
@@ -40,14 +39,14 @@ io.on('connection', (socket) => {
     })
 })
 
+export {io}
+
 mongoose.connect(mongoDB)
    .then(() => {
        console.log('Connected to MongoDB... ')})
    .catch(error => console.log('Could not connect to MongoDB...', error))
 
 server.listen(port, () => {console.log(`Listening on port ${port}...`)})
-
-export {io}
 
 app.use('/api/players/', playerRouter)
 app.use('/api/games/', gameRouter)

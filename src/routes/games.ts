@@ -15,13 +15,13 @@ router.get('/', auth, async (req: Request, res: Response) => {
 
 //get existing games (unfinished)
 router.get('/existingGames', auth, async(req: Request, res: Response) => {
-    const games = await Game.find({winner: {$exists: false}, player2: {$exists: false}}).populate({ path: 'player1', select: '-password'})
+    const games = await Game.find({winner: {$exists: false}, player1: {$ne: (req as ICustomReq).player._id}, player2: {$exists: false}}).populate({ path: 'player1', select: '-password'})
     return res.send(games);
 })
 
 //get a history for a game by id
 router.get('/:id', auth, async (req: Request, res: Response) => {
-    const game = await Game.findById({_id: req.params.id}).populate([{path:'player1', select: '-password'}, {path: 'player2', select: '-password'}, {path: 'winner', select: '-password'}, {path: 'moves.player', select: '-password'}])
+    const game = await Game.findById({_id: req.params.id}).populate([{path:'player1', select: '-password'}, {path: 'player2', select: '-password'}, {path: 'moves.player', select: '-password'}])
     if(!game) return res.status(404).send('Game is not found.')
 
     res.send(game)
@@ -32,8 +32,7 @@ router.post('/', auth, async (req: Request, res: Response) => {
     const body: IGame = req.body as IGame
     const game = new Game({player1: (req as ICustomReq).player._id, multiplayer: body.multiplayer})
     await (await game.save()).populate({path: 'player1', select: '-password'})
-
-    res.send(game)
+    return res.send(game)
 })
 
 //join an existing game
@@ -46,7 +45,7 @@ router.put('/:id', auth, async (req: Request, res: Response) => {
 //save game result
 router.put('/', auth, async (req: Request, res: Response) => {
     let game: IGame | null  = req.body as IGame;
-    game = await Game.findByIdAndUpdate({_id: game._id}, {$set: {winner: game.winner?._id, moves: game.moves}}, {new: true});
+    game = await Game.findByIdAndUpdate({_id: game._id}, {$set: {winner: game.winner, moves: game.moves}}, {new: true});
     res.send(game);
 })
 

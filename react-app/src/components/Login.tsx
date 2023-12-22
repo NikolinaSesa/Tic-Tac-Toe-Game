@@ -12,8 +12,9 @@ import {
   AlertColor,
   Alert,
 } from "@mui/material";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import axios from "axios";
+import { WindowContext } from "./ScreenSize";
 
 interface ResultMessage {
   result: null | AlertColor;
@@ -21,6 +22,8 @@ interface ResultMessage {
 }
 
 const Login = () => {
+  const { clientHeight, clientWidth } = useContext(WindowContext)
+
   const [player, setPlayer] = useState({
     email: "",
     password: "",
@@ -43,7 +46,8 @@ const Login = () => {
           result: null,
           msg: "",
         });
-        window.location.href = "/firstPage";
+        window.open("http://localhost:5173/firstPage");
+        setPlayer({email: '', password: ''})
       })
       .catch((err) => {
         console.log(err.response.data);
@@ -56,8 +60,8 @@ const Login = () => {
   };
   return (
     <>
-      <div style={{width: "100%", height: "100vh", display: "flex", paddingTop: '50px', background: 'black'}}>
-      <Container maxWidth="xs" sx={{height: '525px' , background: 'white', borderRadius: '10px', border: "5px solid rgb(58, 56, 55)"}}>
+      <div style={{width: clientWidth, height: clientHeight, display: "flex", paddingTop: '50px', background: 'black'}}>
+      <Container maxWidth="xs" sx={{ height: '525px' , background: 'white', borderRadius: '10px', border: "5px solid rgb(58, 56, 55)"}}>
         <CssBaseline />
         <Box sx={{ mt: 5}}>
           {registrationResult.result && (

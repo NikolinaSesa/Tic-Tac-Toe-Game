@@ -23,17 +23,29 @@ const style = {
 
 const Game = ({game, onExit}: Props) => {
 
+    const htmlDivs = Array<any>(9).fill(null);
+
+    for(let i = 0; i < htmlDivs.length; i++){
+        htmlDivs[i] = <div className="squareDiv"></div>
+    }
+    
+    game.moves?.map((move) => {
+        if(move.spot != null) 
+            htmlDivs[move.spot] = <div className="squareDiv">{move.sign}</div>
+    })
+
+
     return(
         <>
             <Modal open={true}>
                 <Box sx={style}>
                     <Typography variant="h5" sx={{fontFamily: 'FreeMono, monospace'}}>GAME INFO</Typography>
-                    <Typography variant="h6" sx={{fontFamily: 'FreeMono, monospace', mt: '10px'}}><b>Player 1: </b>{game.player1.name}</Typography>
-                    <Typography variant="h6" sx={{fontFamily: 'FreeMono, monospace', mt: '10px'}}><b>Player 2: </b>{game.player2.name}</Typography>
-                    <Typography variant="h6" sx={{fontFamily: 'FreeMono, monospace', mt: '10px'}}><b>Winner: </b>{game.winner?.name}</Typography>
+                    <Typography variant="h6" sx={{fontFamily: 'FreeMono, monospace', mt: '10px'}}><b>Player 1: </b>{game.player1.name} "X"</Typography>
+                    <Typography variant="h6" sx={{fontFamily: 'FreeMono, monospace', mt: '10px'}}><b>Player 2: </b>{game.player2 ? game.player2.name : 'AI Player'} "O"</Typography>
+                    <Typography variant="h6" sx={{fontFamily: 'FreeMono, monospace', mt: '10px'}}><b>Winner: </b>"{game.winner}"</Typography>
                     <Typography variant="h6" sx={{fontFamily: 'FreeMono, monospace', mt: '10px'}}><b>Moves: </b></Typography>
                     <div className="boardDiv">
-                        
+                        {htmlDivs}
                     </div>
                     <Button variant="outlined" sx={{fontFamily: 'FreeMono, monospace', mt: '40px', width: '150px'}} onClick={() => onExit(false)}>Exit</Button> 
                 </Box>

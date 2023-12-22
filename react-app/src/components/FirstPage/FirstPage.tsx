@@ -7,6 +7,8 @@ import Games from "../Games/Games";
 import Game from "../Game/Game";
 import SinglePlayerBoard from "../SinglePlayerBoard";
 
+export const token = localStorage.getItem("accessToken");
+
 const FirstPage = () => {
   const [player, setPlayer] = useState<IPlayer>({
     _id: "",
@@ -44,7 +46,7 @@ const FirstPage = () => {
       .get<IPlayer>("http://localhost:5000/api/players/currentPlayer", {
         signal: controller.signal,
         headers: {
-          "x-auth-token": localStorage.getItem("accessToken"),
+          "x-auth-token": token,
         },
       })
       .then(({ data }) => {
@@ -74,7 +76,6 @@ const FirstPage = () => {
   }
 
   const handleCreateNewGame = () => {
-    const token = localStorage.getItem("accessToken");
     axios
       .post<IGame>(
         "http://localhost:5000/api/games/",
@@ -116,11 +117,11 @@ const FirstPage = () => {
     axios
       .get<IGame[]>("http://localhost:5000/api/games/existingGames", {
         headers: {
-          "x-auth-token": localStorage.getItem("accessToken"),
+          "x-auth-token": token,
         },
       })
       .then(({ data }) => {
-        setGames(data.filter((game) => !game.player2));
+        setGames(data);
 
         setShowButtons(false);
         setShowGames(true);
@@ -129,7 +130,6 @@ const FirstPage = () => {
   };
 
   const handleJoin = (gameId: string) => {
-    const token = localStorage.getItem("accessToken");
     axios
       .put<IGame>(
         "http://localhost:5000/api/games/" + gameId,
@@ -169,7 +169,7 @@ const FirstPage = () => {
     axios
       .get<IGame[]>("http://localhost:5000/api/games/", {
         headers: {
-          "x-auth-token": localStorage.getItem("accessToken"),
+          "x-auth-token": token,
         },
       })
       .then(({ data }) => {
@@ -188,7 +188,7 @@ const FirstPage = () => {
     axios
       .get<IGame>("http://localhost:5000/api/games/"+id, {
         headers: {
-          'x-auth-token': localStorage.getItem('accessToken')
+          'x-auth-token': token
         }
       })
       .then(({data}) => {
@@ -203,7 +203,6 @@ const FirstPage = () => {
   }
 
   const handlePlayAlone = () => {
-    const token = localStorage.getItem("accessToken");
     axios
       .post<IGame>(
         "http://localhost:5000/api/games/",
@@ -233,6 +232,12 @@ const FirstPage = () => {
         setShowSinglePlayerBoard(true);
       })
       .catch((err) => console.log(err.response.data));
+  }
+
+  const handleExitGame = () => {
+    setShowGameBoard(false);
+    setShowSinglePlayerBoard(false);
+    setShowButtons(true);
   }
 
   return (
@@ -270,11 +275,11 @@ const FirstPage = () => {
               </button>
             </div>
           )}
-          {showGameBoard && <Board game={game} player={player}/>}
+          {showGameBoard && <Board game={game} player={player} onExit={handleExitGame}/>}
           {showGames && <Games games={games} onClick={handleJoin} finishedGames={false}/>}
           {showHistory && <Games games={games} onClick={handleHistoryOfGame} finishedGames={true}/>}
           {showGame && <Game game={game} onExit={handleExit}></Game>}
-          {showSinglePlayerBoard && <SinglePlayerBoard game={game}></SinglePlayerBoard>}
+          {showSinglePlayerBoard && <SinglePlayerBoard game={game} onExit={handleExitGame}></SinglePlayerBoard>}
         </div>
       </div>
     </>

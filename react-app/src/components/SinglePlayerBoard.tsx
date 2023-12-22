@@ -1,12 +1,15 @@
 import { Avatar, Box, Button, Modal, Typography } from "@mui/material";
 import RestartAltOutlinedIcon from '@mui/icons-material/RestartAltOutlined';
 import { useState } from "react";
-import { IGame, IMove, IPlayer } from "./Board/Board";
+import { IGame, IMove } from "./Board/Board";
 import './Board/Board.css'
 import Square from "./Board/Square";
+import axios from "axios";
+import { token } from "./FirstPage/FirstPage";
 
 interface Props {
     game: IGame
+    onExit: () => void
 }
 
 const style = {
@@ -23,7 +26,7 @@ const style = {
     p: 4,
 }
 
-const SinglePlayerBoard = ({game} : Props) => {
+const SinglePlayerBoard = ({game, onExit} : Props) => {
 
     const [board, setBoard] = useState(Array<string | null>(9).fill(null));
     const [xIsNext, setXIsNext] = useState(true);
@@ -38,13 +41,16 @@ const SinglePlayerBoard = ({game} : Props) => {
         setMoves([...moves, {spot: i, sign: "X", player: game.player1}]);
         setXIsNext(false);
 
+        setWinner(getWinner(board.map((square, index) => index === i ? square = "X" : square)));
+
         const boardCopy = board.map((square, index) => index === i ? square = "X" : square)
+        const movesCopy = [...moves, {spot: i, sign: "X", player: game.player1}]
         const aiMoveSpot: number | null = aiMove(boardCopy, false);
 
         if(aiMoveSpot === null) return;
 
         setBoard(boardCopy.map((square, index) => index === aiMoveSpot ? square = "O" : square));
-        setMoves([...moves, {spot: aiMoveSpot, sign: "O", player: {} as IPlayer}]);
+        setMoves([...movesCopy, {spot: aiMoveSpot, sign: "O"}]);
         setXIsNext(true);
         
         setWinner(getWinner(boardCopy.map((square, index) => index === aiMoveSpot ? square = "O" : square)));
@@ -57,7 +63,20 @@ const SinglePlayerBoard = ({game} : Props) => {
     }
 
     const handleExit = () => {
-        
+        const finishedGame: IGame = {
+            _id: game._id,
+            player1: game.player1,
+            player2: game.player2,
+            winner: winner,
+            moves: moves
+        }
+        axios.put("http://localhost:5000/api/games/", finishedGame, {
+            headers: {
+                'x-auth-token': token
+            }
+        }).then(() => {
+            onExit();
+        }).catch((err) => console.log(err))    
     }
 
     return(

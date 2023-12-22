@@ -31,7 +31,7 @@ const Games = ({ games, onClick, finishedGames }: Props) => {
     setSearchItem(searchItem);
 
     const filteredGames = games.filter((game) => game.player1.name.toLowerCase().includes(searchItem.toLowerCase()) ||
-                                        game.player2.name.toLowerCase().includes(searchItem.toLowerCase())
+                                        game.player2?.name.toLowerCase().includes(searchItem.toLowerCase())
                                       )
 
     setFilteredGames(filteredGames)
@@ -62,7 +62,7 @@ const Games = ({ games, onClick, finishedGames }: Props) => {
                 </Avatar>
                 {!finishedGames && <Typography sx={{fontFamily: "FreeMono, monospace", fontWeight: 'bold'}}>Join the game</Typography>}
                 <Typography sx={{fontFamily: "FreeMono, monospace"}}><b>Player 1:</b> {val.player1.name}</Typography>
-                {finishedGames && <Typography sx={{fontFamily: "FreeMono, monospace"}}><b>Player 2:</b> {val.player2.name}</Typography>}
+                {finishedGames && <Typography sx={{fontFamily: "FreeMono, monospace"}}><b>Player 2:</b> {val.player2 ? val.player2.name : 'AI Player'}</Typography>}
               </Paper>
             </Grid>
           ))}

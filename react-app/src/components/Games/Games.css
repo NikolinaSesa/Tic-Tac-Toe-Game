@@ -3,6 +3,7 @@
     height: 70vh;
     padding: 30px;
     margin: 0 auto;
+    overflow-y: auto;
 }
 
 .paper{
@@ -23,7 +24,7 @@
 .searchBox{
     padding: 10px;
     margin: 0 auto;
-    width: 90%;
+    width: 60vw;
     border-radius: 10px;
     font-size: medium;
     font-family: FreeMono, monospace;

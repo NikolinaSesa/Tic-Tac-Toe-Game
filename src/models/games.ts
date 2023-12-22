@@ -9,7 +9,7 @@ export interface IMove{
 export interface IGame extends mongoose.Document {
     player1: mongoose.Types.ObjectId,
     player2?: mongoose.Types.ObjectId,
-    winner?: mongoose.Types.ObjectId,
+    winner?: string,
     moves?: mongoose.Types.DocumentArray<IMove>,
     multiplayer: boolean
 }
@@ -25,10 +25,7 @@ const GameSchema = new mongoose.Schema<IGame>(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Player'
         },
-        winner: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Player',
-        },
+        winner: String,
         moves: {
             type: [{
                 spot: {
