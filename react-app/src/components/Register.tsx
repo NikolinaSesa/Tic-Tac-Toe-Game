@@ -56,7 +56,7 @@ const Register = () => {
   return (
     <>
       <div style={{width: "100%", height: "100vh", display: "flex", paddingTop: '50px', background: 'black'}}>
-      <Container maxWidth="xs" sx={{height: "600px" , background: 'white', borderRadius: '10px', border: "5px solid rgb(58, 56, 55)"}}>
+      <Container maxWidth="xs" sx={{height: "625px" , background: 'white', borderRadius: '10px', border: "5px solid rgb(58, 56, 55)"}}>
         <CssBaseline />
         <Box sx={{ mt: 5 }}>
           {registrationResult.result && (

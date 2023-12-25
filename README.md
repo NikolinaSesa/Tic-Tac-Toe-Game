@@ -1,7 +1,7 @@
 # Tic-Tac-Toe-Game
 
 # How to run a project
-To run Node application, navigate to the root directory, open terminal and type the following command: npm start 
+To run Node application, navigate to the express-app directory, open terminal and type the following command: npm start 
 
 To run React application, navigate to the react-app directory, open terminal and type the following command: npm run dev.
 

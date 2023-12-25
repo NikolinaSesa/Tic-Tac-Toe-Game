@@ -1,0 +1,44 @@
+version: '3.8'
+
+services: 
+  mongodb: 
+    image: mongo:4.4.6
+    container_name: mongodb
+    restart: unless-stopped
+    env_file: ./.env
+    ports:
+      - "27017:27017"
+    networks: 
+      - webapp
+
+  express-app: 
+    build: ./express-app
+    container_name: express-app
+    restart: unless-stopped
+    env_file: ./.env
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongodb
+    environment: 
+      - PORT=5000
+      - DB_HOST=mongodb
+      - DB_PORT=$MONGODB_PORT
+      - DB_NAME=$MONGODB_DATABASE
+    networks: 
+      - webapp
+
+  react-app: 
+    build: ./react-app
+    container_name: react-app
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    depends_on: 
+      - express-app
+    networks: 
+      - webapp
+
+networks: 
+  webapp:
+    driver: bridge
