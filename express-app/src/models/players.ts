@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
-import Joi, { ValidationResult } from "joi";
-import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
+import mongoose from "mongoose"
+import Joi, { ValidationResult } from "joi"
+import jwt from "jsonwebtoken"
+import dotenv from "dotenv"
 
 dotenv.config()
 
@@ -37,18 +37,22 @@ PlayerSchema.methods.generateAuthToken = function(){
 export const Player = mongoose.model<IPlayer>('Player', PlayerSchema)
 
 export function validatePlayer (player: IPlayer): ValidationResult{
+
     const schema = Joi.object({
         name: Joi.string().min(3).max(50).required(),
         email: Joi.string().max(255).required().email(),
         password: Joi.string().min(3).max(255).required()
     })
+
     return schema.validate(player)
 }
 
 export function validateCredentials (player: IPlayer): ValidationResult{
+
     const schema = Joi.object({
         email: Joi.string().max(255).required().email(),
         password: Joi.string().min(3).max(255).required()
     })
+    
     return schema.validate(player)
 }

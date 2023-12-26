@@ -6,6 +6,7 @@ const router: Router = express.Router()
 
 //login 
 router.post('/', async (req: Request, res: Response) => {
+
     const error = validateCredentials(req.body).error
     if(error) return res.status(400).send(error.details[0].message)
 
@@ -17,7 +18,7 @@ router.post('/', async (req: Request, res: Response) => {
 
     const token = player.generateAuthToken()
 
-    res.send(token)
+    return res.send(token)
 })
 
 export default router

@@ -7,14 +7,15 @@ import Games from "../Games/Games";
 import Game from "../Game/Game";
 import SinglePlayerBoard from "../SinglePlayerBoard";
 
-export const token = localStorage.getItem("accessToken");
+export const token = localStorage.getItem("accessToken")
 
 const FirstPage = () => {
+
   const [player, setPlayer] = useState<IPlayer>({
     _id: "",
     name: "",
     email: "",
-  });
+  })
 
   const [game, setGame] = useState<IGame>({
     _id: "",
@@ -28,216 +29,206 @@ const FirstPage = () => {
       name: "",
       email: "",
     },
-  });
+  })
 
-  const [games, setGames] = useState<IGame[]>([]);
-
-  const [showButtons, setShowButtons] = useState(true);
-  const [showGameBoard, setShowGameBoard] = useState(false);
-  const [showGames, setShowGames] = useState(false);
-  const [showHistory, setShowHistory] = useState(false);
-  const [showGame, setShowGame] = useState(false);
-  const [showSinglePlayerBoard, setShowSinglePlayerBoard] = useState(false);
+  const [games, setGames] = useState<IGame[]>([])
+  const [showButtons, setShowButtons] = useState(true)
+  const [showGameBoard, setShowGameBoard] = useState(false)
+  const [showGames, setShowGames] = useState(false)
+  const [showHistory, setShowHistory] = useState(false)
+  const [showGame, setShowGame] = useState(false)
+  const [showSinglePlayerBoard, setShowSinglePlayerBoard] = useState(false)
 
   useEffect(() => {
-    const controller = new AbortController();
 
-    axios
-      .get<IPlayer>("http://localhost:5000/api/players/currentPlayer", {
-        signal: controller.signal,
-        headers: {
-          "x-auth-token": token,
-        },
-      })
-      .then(({ data }) => {
-        setPlayer({
-          ...player,
-          _id: data._id,
-          name: data.name,
-          email: data.email,
-        });
-      })
-      .catch((err) => console.log(err.response.data));
-    return () => controller.abort();
-  }, []);
+    const controller = new AbortController()
+
+    axios.get<IPlayer>("http://localhost:5000/api/players/currentPlayer", {
+          signal: controller.signal,
+          headers: {
+            "x-auth-token": token,
+          },
+        })
+        .then(({ data }) => {
+
+          setPlayer({
+            ...player,
+            _id: data._id,
+            name: data.name,
+            email: data.email,
+          })
+        })
+        .catch((err) => console.log(err.response.data))
+
+    return () => controller.abort()
+
+  }, [])
 
   const handleLogout = () => {
-    localStorage.removeItem("accessToken");
-    setPlayer({ ...player, _id: "", name: "", email: "" });
-    window.location.href = "../";
+
+    localStorage.removeItem("accessToken")
+
+    setPlayer({ ...player, _id: "", name: "", email: "" })
+
+    window.location.href = "../"
   };
 
   const handleHome = () => {
-    setShowButtons(true);
-    setShowGameBoard(false);
-    setShowGames(false);
-    setShowHistory(false);
-    setShowSinglePlayerBoard(false);
+
+    setShowButtons(true)
+    setShowGameBoard(false)
+    setShowGames(false)
+    setShowHistory(false)
+    setShowSinglePlayerBoard(false)
   }
 
   const handleCreateNewGame = () => {
-    axios
-      .post<IGame>(
-        "http://localhost:5000/api/games/",
-        {
-          multiplayer: true
-        },
-        {
-          headers: {
-            "x-auth-token": token,
-          },
-        }
-      )
-      .then(({ data }) => {
 
-        setGame({
-          ...game,
-          _id: data._id,
-          player1: {
-            ...game.player1,
-            _id: data.player1._id,
-            name: data.player1.name,
-            email: data.player1.email,
-          },
-          player2: {
-            ...game.player2,
-            _id: "",
-            name: "",
-            email: "",
-          },
-        });
+    axios.post<IGame>("http://localhost:5000/api/games/", {multiplayer : true}, {
+            headers: {
+              "x-auth-token": token,
+            },
+          })
+          .then(({ data }) => {
 
-        setShowButtons(false);
-        setShowGameBoard(true);
-      })
-      .catch((err) => console.log(err.response.data));
+            setGame({
+              ...game,
+              _id: data._id,
+              player1: {
+                ...game.player1,
+                _id: data.player1._id,
+                name: data.player1.name,
+                email: data.player1.email,
+              },
+              player2: {
+                ...game.player2,
+                _id: "",
+                name: "",
+                email: "",
+              },
+            });
+
+            setShowButtons(false)
+            setShowGameBoard(true)
+          })
+          .catch((err) => console.log(err.response.data))
   };
 
   const handleJoining = () => {
-    axios
-      .get<IGame[]>("http://localhost:5000/api/games/existingGames", {
-        headers: {
-          "x-auth-token": token,
-        },
-      })
-      .then(({ data }) => {
-        setGames(data);
 
-        setShowButtons(false);
-        setShowGames(true);
-      })
-      .catch((err) => console.log(err));
-  };
+    axios.get<IGame[]>("http://localhost:5000/api/games/existingGames", {
+            headers: {
+              "x-auth-token": token,
+            },
+          })
+          .then(({ data }) => {
+            setGames(data)
+            setShowButtons(false)
+            setShowGames(true)
+          })
+          .catch((err) => console.log(err))
+  }
 
   const handleJoin = (gameId: string) => {
-    axios
-      .put<IGame>(
-        "http://localhost:5000/api/games/" + gameId,
-        {},
-        {
-          headers: {
-            "x-auth-token": token,
-          },
-        }
-      )
-      .then(({ data }) => {
 
-        setGame({
-          ...game,
-          _id: data._id,
-          player1: {
-            ...game.player1,
-            _id: data.player1._id,
-            name: data.player1.name,
-            email: data.player1.email,
-          },
-          player2: {
-            ...game.player2,
-            _id: data.player2._id,
-            name: data.player2.name,
-            email: data.player2.email,
-          },
-        });
+    axios.put<IGame>("http://localhost:5000/api/games/" + gameId, {}, {
+            headers: {
+              "x-auth-token": token,
+            },
+          })
+          .then(({ data }) => {
 
-        setShowGameBoard(true);
-        setShowGames(false);
-      })
-      .catch((err) => console.log(err.response.data));
+            setGame({
+              ...game,
+              _id: data._id,
+              player1: {
+                ...game.player1,
+                _id: data.player1._id,
+                name: data.player1.name,
+                email: data.player1.email,
+              },
+              player2: {
+                ...game.player2,
+                _id: data.player2._id,
+                name: data.player2.name,
+                email: data.player2.email,
+              },
+            });
+
+            setShowGameBoard(true)
+            setShowGames(false)
+          })
+          .catch((err) => console.log(err.response.data))
   };
 
   const handleHistory = () => {
-    axios
-      .get<IGame[]>("http://localhost:5000/api/games/", {
-        headers: {
-          "x-auth-token": token,
-        },
-      })
-      .then(({ data }) => {
-        setGames(data);
 
-        setShowButtons(false);
-        setShowGameBoard(false);
-        setShowGames(false);
-        setShowSinglePlayerBoard(false);
-        setShowHistory(true);
-      })
-      .catch((err) => console.log(err));
+    axios.get<IGame[]>("http://localhost:5000/api/games/", {
+            headers: {
+              "x-auth-token": token,
+            },
+          })
+          .then(({ data }) => {
+            setGames(data)
+            setShowButtons(false)
+            setShowGameBoard(false)
+            setShowGames(false)
+            setShowSinglePlayerBoard(false)
+            setShowHistory(true)
+          })
+          .catch((err) => console.log(err))
   };
 
   const handleHistoryOfGame = (id: String) => {
-    axios
-      .get<IGame>("http://localhost:5000/api/games/"+id, {
-        headers: {
-          'x-auth-token': token
-        }
-      })
-      .then(({data}) => {
-        setGame(data);
-        setShowGame(true)
-      })
-      .catch((err) => console.log(err))
+
+    axios.get<IGame>("http://localhost:5000/api/games/"+id, {
+            headers: {
+              'x-auth-token': token
+            }
+          })
+          .then(({data}) => {
+            setGame(data)
+            setShowGame(true)
+          })
+          .catch((err) => console.log(err))
   }
 
   const handleExit = (show: boolean) => {
-    setShowGame(show);
+
+    setShowGame(show)
   }
 
   const handlePlayAlone = () => {
-    axios
-      .post<IGame>(
-        "http://localhost:5000/api/games/",
-        {
-          multiplayer: false
-        },
-        {
-          headers: {
-            "x-auth-token": token,
-          },
-        }
-      )
-      .then(({ data }) => {
 
-        setGame({
-          ...game,
-          _id: data._id,
-          player1: {
-            ...game.player1,
-            _id: data.player1._id,
-            name: data.player1.name,
-            email: data.player1.email,
-          },
-        });
+    axios.post<IGame>("http://localhost:5000/api/games/", { multiplayer: false }, {
+            headers: {
+              "x-auth-token": token,
+            },
+          })
+          .then(({ data }) => {
 
-        setShowButtons(false);
-        setShowSinglePlayerBoard(true);
-      })
-      .catch((err) => console.log(err.response.data));
+            setGame({
+              ...game,
+              _id: data._id,
+              player1: {
+                ...game.player1,
+                _id: data.player1._id,
+                name: data.player1.name,
+                email: data.player1.email,
+              },
+            })
+
+            setShowButtons(false)
+            setShowSinglePlayerBoard(true)
+          })
+          .catch((err) => console.log(err.response.data))
   }
 
   const handleExitGame = () => {
-    setShowGameBoard(false);
-    setShowSinglePlayerBoard(false);
-    setShowButtons(true);
+
+    setShowGameBoard(false)
+    setShowSinglePlayerBoard(false)
+    setShowButtons(true)
   }
 
   return (
@@ -283,7 +274,7 @@ const FirstPage = () => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default FirstPage;
+export default FirstPage

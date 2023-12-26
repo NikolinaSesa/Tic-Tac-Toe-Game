@@ -13,11 +13,11 @@ import VideogameAssetOutlinedIcon from '@mui/icons-material/VideogameAssetOutlin
 
 const style = {
   bgcolor: "white",
-};
+}
 
 const textStyle = {
   fontFamily: "FreeMono, monospace",
-};
+}
 
 interface Props {
   name: string;
@@ -29,6 +29,7 @@ interface Props {
 }
 
 const Sidebar = ({ name, onLogout, onHistory, onHome }: Props) => {
+
   return (
     <>
       <List sx={style} component="nav">
@@ -73,6 +74,7 @@ const Sidebar = ({ name, onLogout, onHistory, onHome }: Props) => {
         </ListItem>
       </List>
     </>
-  );
-};
-export default Sidebar;
+  )
+}
+
+export default Sidebar

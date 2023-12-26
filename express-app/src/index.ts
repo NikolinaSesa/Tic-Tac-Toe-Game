@@ -11,23 +11,27 @@ import authRouter from './routes/auth'
 
 dotenv.config()
 
-const port = process.env.PORT
+const port = process.env.NODE_PORT
 const mongoDB = `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`
+const react_app = process.env.REACT_APP
 
 const app = express()
 app.use(express.json())
 app.use(helmet())
 app.use(cors())
+
 const server = http.createServer(app)
+
 const io = new Server(server, {cors: {
-    origin: "http://localhost:5173"
+    origin: react_app
 }})
 
 io.on('connection', (socket) => {
+
     console.log("Connected...", socket.id)
 
     socket.on("sendMove", (data) => {
-        socket.broadcast.emit("receiveMove", data);
+        socket.broadcast.emit("receiveMove", data)
     })
 
     socket.on("reset", () => {
@@ -35,16 +39,15 @@ io.on('connection', (socket) => {
     })
 
     socket.on('disconnect', () => {
-        console.log('user disconnected');
+        console.log('user disconnected')
     })
 })
 
 export {io}
 
 mongoose.connect(mongoDB)
-   .then(() => {
-       console.log('Connected to MongoDB... ')})
-   .catch(error => console.log('Could not connect to MongoDB...', error))
+        .then(() => console.log('Connected to MongoDB... '))
+        .catch(error => console.log('Could not connect to MongoDB...', error))
 
 server.listen(port, () => {console.log(`Listening on port ${port}...`)})
 

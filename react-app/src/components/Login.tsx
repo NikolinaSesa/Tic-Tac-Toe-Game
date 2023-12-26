@@ -22,42 +22,51 @@ interface ResultMessage {
 }
 
 const Login = () => {
+
   const { clientHeight, clientWidth } = useContext(WindowContext)
 
   const [player, setPlayer] = useState({
     email: "",
     password: "",
-  });
+  })
+
   const [registrationResult, setRegistrationResult] = useState<ResultMessage>({
     result: null,
     msg: "",
-  });
-  const handleLogin = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
-    event.preventDefault();
+  })
+
+  const handleLogin = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+
+    event.preventDefault()
 
     axios
       .post("http://localhost:5000/api/auth/", player)
       .then(({ data }) => {
-        localStorage.setItem("accessToken", data);
+
+        localStorage.setItem("accessToken", data)
+
         setRegistrationResult({
           ...registrationResult,
           result: null,
           msg: "",
-        });
-        window.open("http://localhost:5173/firstPage");
+        })
+
+        window.open("http://localhost:5173/firstPage")
+
         setPlayer({email: '', password: ''})
       })
       .catch((err) => {
-        console.log(err.response.data);
+
+        console.log(err.response.data)
+
         setRegistrationResult({
           ...registrationResult,
           result: "error",
           msg: `${err.response.data}`,
-        });
-      });
-  };
+        })
+      })
+  }
+
   return (
     <>
       <div style={{width: clientWidth, height: clientHeight, display: "flex", paddingTop: '50px', background: 'black'}}>
@@ -135,6 +144,6 @@ const Login = () => {
       </div>
     </>
   );
-};
+}
 
-export default Login;
+export default Login

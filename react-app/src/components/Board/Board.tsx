@@ -34,7 +34,7 @@ export interface IPlayer {
 interface Props {
   game: IGame;
   player: IPlayer;
-  onExit: () => void
+  onExit: () => void;
 }
 
 const style = {
@@ -52,18 +52,18 @@ const style = {
 }
 
 const Board = ({ game, player, onExit }: Props) => {
-  const socket = io("http://localhost:5000");
+
+  const socket = io("http://localhost:5000")
+
   const [gameState, setGameState] = useState<IGame>(game)
-
-  const [board, setBoard] = useState(Array<string | null>(9).fill(null));
-  const [xIsNext, setXIsNext] = useState(true);
-
-  const [moves, setMoves] = useState<IMove[]>([]);
-  const [winner, setWinner] = useState<String | null>(null);
-
+  const [board, setBoard] = useState(Array<string | null>(9).fill(null))
+  const [xIsNext, setXIsNext] = useState(true)
+  const [moves, setMoves] = useState<IMove[]>([])
+  const [winner, setWinner] = useState<String | null>(null)
   const [currentPlayer, setCurrentPlayer] = useState<String | null>(null)
 
   useEffect(() => {
+
     socket.on("gameState", (data) => {
       setGameState(data)
       setCurrentPlayer(data.player1._id)
@@ -87,30 +87,31 @@ const Board = ({ game, player, onExit }: Props) => {
 
   const handleClick = (i: number) => {
    
-    if(currentPlayer != player._id) return;
+    if(currentPlayer != player._id) return
 
-    const boardCopy = [...board];
-    const movesCopy = [...moves];
+    const boardCopy = [...board]
+    const movesCopy = [...moves]
 
-    if (boardCopy[i] || getWinner(boardCopy)) return;
+    if (boardCopy[i] || getWinner(boardCopy)) return
 
     if(xIsNext) {
-      boardCopy[i] = "X";
+      boardCopy[i] = "X"
       movesCopy.push({sign: "X", spot: i, player: game.player1})
     }
     else{
-      boardCopy[i] = "O";
+      boardCopy[i] = "O"
       movesCopy.push({sign: "O", spot: i, player: game.player2})
     }
 
-    let nextPlayer: String = "";
+    let nextPlayer: String = ""
     currentPlayer === gameState.player1._id ? nextPlayer = gameState.player2._id : nextPlayer = gameState.player1._id
 
     socket.emit("sendMove", {"boardCopy": boardCopy, "movesCopy": movesCopy, "xIsNext": !xIsNext, "currentPlayer": nextPlayer})
 
-  };
+  }
 
   const handleExit = () => {
+
     const finishedGame: IGame = {
       _id: gameState._id,
       player1: gameState.player1,
@@ -120,12 +121,12 @@ const Board = ({ game, player, onExit }: Props) => {
     }
 
     axios.put("http://localhost:5000/api/games/", finishedGame, {
-      headers: {
-        'x-auth-token': token
-      }
-    }).then(() => {
-      onExit();
-    }).catch((err) => console.log(err))
+            headers: {
+              'x-auth-token': token
+            }
+          })
+          .then(() => onExit())
+          .catch((err) => console.log(err))
   }
 
   const handleReset = () => {
@@ -172,6 +173,7 @@ const Board = ({ game, player, onExit }: Props) => {
 
 
 function getWinner(board : Array<string | null>) {
+
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
@@ -181,16 +183,17 @@ function getWinner(board : Array<string | null>) {
     [2, 5, 8],
     [0, 4, 8],
     [2, 4, 6]
-  ];
+  ]
 
   for(let i = 0; i< lines.length; i++){
-    const [a, b, c] = lines[i];
+
+    const [a, b, c] = lines[i]
+
     if(board[a] && board[a] === board[b] && board[a] === board[c]){
-      return board[a];
+      return board[a]
     }
   }
-  return null;
+  return null
 }
 
-
-export default Board;
+export default Board

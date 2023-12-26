@@ -3,8 +3,8 @@ import { IGame} from "../Board/Board";
 import './Game.css'
 
 interface Props {
-    game: IGame,
-    onExit: (show: boolean) => void
+    game: IGame;
+    onExit: (show: boolean) => void;
 }
 
 const style = {
@@ -19,11 +19,11 @@ const style = {
     boxShadow: 24,
     textAlign: 'center',
     p: 4,
-  }
+}
 
 const Game = ({game, onExit}: Props) => {
 
-    const htmlDivs = Array<any>(9).fill(null);
+    const htmlDivs = Array<any>(9).fill(null)
 
     for(let i = 0; i < htmlDivs.length; i++){
         htmlDivs[i] = <div className="squareDiv"></div>

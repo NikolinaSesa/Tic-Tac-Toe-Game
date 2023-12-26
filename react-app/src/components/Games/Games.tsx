@@ -23,17 +23,17 @@ interface Props {
 
 const Games = ({ games, onClick, finishedGames }: Props) => {
 
-  const [searchItem, setSearchItem] = useState('');
-  const [filteredGames, setFilteredGames] = useState(games);
+  const [searchItem, setSearchItem] = useState('')
+  const [filteredGames, setFilteredGames] = useState(games)
 
   const searchHandler = (e : React.ChangeEvent<HTMLInputElement>) => {
+
     const searchItem = e.target.value
-    setSearchItem(searchItem);
+    setSearchItem(searchItem)
 
     const filteredGames = games.filter((game) => game.player1.name.toLowerCase().includes(searchItem.toLowerCase()) ||
                                         game.player2?.name.toLowerCase().includes(searchItem.toLowerCase())
                                       )
-
     setFilteredGames(filteredGames)
   }
 
@@ -69,7 +69,7 @@ const Games = ({ games, onClick, finishedGames }: Props) => {
         </Grid>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default Games;
+export default Games

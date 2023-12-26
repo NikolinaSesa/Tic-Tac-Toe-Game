@@ -21,38 +21,44 @@ interface ResultMessage {
 }
 
 const Register = () => {
+
   const [player, setPlayer] = useState({
     name: "",
     email: "",
     password: "",
-  });
+  })
+
   const [registrationResult, setRegistrationResult] = useState<ResultMessage>({
     result: null,
     msg: "",
-  });
-  const handleRegister = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
-    event.preventDefault();
+  })
+
+  const handleRegister = ( event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+
+    event.preventDefault()
 
     axios
       .post("http://localhost:5000/api/players/", player)
       .then(({ data }) => {
+
         setRegistrationResult({
           ...registrationResult,
           result: "success",
           msg: `Welcome ${data.name}. Login and start the game!`,
-        });
+        })
       })
       .catch((err) => {
-        console.log(err.response.data);
+
+        console.log(err.response.data)
+
         setRegistrationResult({
           ...registrationResult,
           result: "error",
           msg: `${err.response.data}`,
-        });
-      });
-  };
+        })
+      })
+  }
+
   return (
     <>
       <div style={{width: "100%", height: "100vh", display: "flex", paddingTop: '50px', background: 'black'}}>
@@ -143,7 +149,7 @@ const Register = () => {
       </Container>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default Register;
+export default Register
