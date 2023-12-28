@@ -8,8 +8,8 @@ import mongoose from 'mongoose'
 import playerRouter from './routes/players'
 import gameRouter from './routes/games'
 import authRouter from './routes/auth'
-import {schema} from './graphql/schema/players'
-import {root} from './graphql/resolvers/players'
+import {schema} from './graphql/schema'
+import {root} from './graphql/resolvers'
 import { graphqlHTTP } from 'express-graphql'
 
 dotenv.config()
@@ -20,7 +20,7 @@ const react_app = process.env.REACT_APP
 
 const app = express()
 
-app.use("/", graphqlHTTP({
+app.use("/", cors(), helmet(), graphqlHTTP({
     schema: schema,
     rootValue: root,
 }))
