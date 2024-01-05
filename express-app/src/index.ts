@@ -20,10 +20,17 @@ const react_app = process.env.REACT_APP
 
 const app = express()
 
-app.use("/", cors(), helmet(), graphqlHTTP({
-    schema: schema,
-    rootValue: root,
-}))
+//app.use("/", cors(), helmet(), graphqlHTTP({
+//    schema: schema,
+//    rootValue: root,
+//}))
+
+app.use(express.json())
+app.use(cors())
+app.use(helmet())
+app.use('/api/players/', playerRouter)
+app.use('/api/games/', gameRouter)
+app.use('/api/auth/', authRouter)
 
 const server = http.createServer(app)
 
@@ -55,20 +62,3 @@ mongoose.connect(mongoDB)
         .catch(error => console.log('Could not connect to MongoDB...', error))
        
 server.listen(port, () => {console.log(`Listening on port ${port}...`)})
-
-// app.use('/api/players/', playerRouter)
-// app.use('/api/games/', gameRouter)
-// app.use('/api/auth/', authRouter)
-
-
-
-
-
-
-
-
-
-
-
-
-
